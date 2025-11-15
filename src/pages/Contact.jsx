@@ -1,41 +1,106 @@
+// src/pages/Contact.jsx
+import { useState } from "react";
+
+const API_BASE = "http://localhost:5000/api";
+
 export default function Contact() {
-  function onSubmit(e) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+
+  const [status, setStatus] = useState(""); // success text
+  const [error, setError] = useState(""); // error text
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget).entries());
-    console.log("Captured:", data);
-    window.location.href = "/"; // redirect back to Home
-  }
+    setStatus("");
+    setError("");
+
+    if (!name || !email || !message) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await fetch(`${API_BASE}/contacts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to send message");
+      }
+
+      setStatus("Your message has been sent!");
+      setName("");
+      setEmail("");
+      setMessage("");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <section>
+    <div style={{ color: "white", padding: "2rem 0" }}>
       <h1>Contact Me</h1>
-      <div>
-        <strong>Email:</strong> you@example.com • <strong>Phone:</strong> (555)
-        555-5555
-      </div>
-      <form onSubmit={onSubmit} style={{ marginTop: 12 }}>
-        <div style={{ display: "flex", gap: 8 }}>
-          <input name="firstName" placeholder="First Name" required />
-          <input name="lastName" placeholder="Last Name" required />
-        </div>
-        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-          <input name="phone" placeholder="Contact Number" />
+      <p>If you&apos;d like to reach out, fill in the form below.</p>
+
+      {status && <p style={{ color: "lightgreen" }}>{status}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          maxWidth: 400,
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.75rem",
+        }}
+      >
+        <label>
+          Name
+          <input
+            type="text"
+            value={name}
+            style={{ width: "100%" }}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </label>
+
+        <label>
+          Email
           <input
             type="email"
-            name="email"
-            placeholder="Email Address"
-            required
+            value={email}
+            style={{ width: "100%" }}
+            onChange={(e) => setEmail(e.target.value)}
           />
-        </div>
-        <textarea
-          name="message"
-          rows="4"
-          placeholder="Message..."
-          style={{ width: "100%", marginTop: 8 }}
-        />
-        <button type="submit" style={{ marginTop: 8 }}>
-          Send Message
+        </label>
+
+        <label>
+          Message
+          <textarea
+            value={message}
+            style={{ width: "100%", minHeight: 100 }}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        </label>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Sending..." : "Send Message"}
         </button>
       </form>
-    </section>
+    </div>
   );
 }

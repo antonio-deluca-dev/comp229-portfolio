@@ -1,11 +1,32 @@
+// server/models/qualification.model.js
 import mongoose from "mongoose";
 
 const qualificationSchema = new mongoose.Schema(
   {
-    school: String,
-    program: String,
-    startYear: Number,
-    endYear: Number,
+    school: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    program: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    level: {
+      type: String,
+      default: "",
+    },
+    startYear: {
+      type: Number,
+    },
+    endYear: {
+      type: Number,
+    },
+    description: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );

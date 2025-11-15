@@ -1,6 +1,3 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar.jsx";
@@ -10,6 +7,7 @@ import Projects from "./pages/Projects.jsx";
 import Education from "./pages/Education.jsx";
 import Services from "./pages/Services.jsx";
 import Contact from "./pages/Contact.jsx";
+import SigninPage from "./pages/SigninPage.jsx";
 
 export default function App() {
   return (
@@ -23,6 +21,7 @@ export default function App() {
           <Route path="/education" element={<Education />} />
           <Route path="/services" element={<Services />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/signin" element={<SigninPage />} />
         </Routes>
       </div>
     </>
